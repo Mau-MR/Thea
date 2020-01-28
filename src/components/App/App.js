@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import './styles.css'
-import HomePage from '../HomePage/HomePage'
+import LandingPage from '../LandingPage/landingPage'
 import Login from '../Login/Login'
-import Register from '../Register/Register'
+import Productos from "../Productos/Productos"
+import Clientas from "../Clientas/clientas"
 import Dashboard from '../Dashboard/DashBoard'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { CssBaseline, CircularProgress } from '@material-ui/core'
+import { CircularProgress } from '@material-ui/core'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import firebase from '../firebase'
 
-const theme = createMuiTheme()
+
 
 export default function App() {
 
@@ -23,16 +23,17 @@ export default function App() {
 
 
 	return firebaseInitialized !== false ? (
-		<MuiThemeProvider theme={theme}>
-			<CssBaseline />
+	
+			
 			<Router>
 				<Switch>
-					<Route exact path="/" component={HomePage} />
+					<Route exact path="/" component={LandingPage}/>
 					<Route exact path="/login" component={Login} />
-					<Route exact path="/register" component={Register} />
+					<Route exact path="/productos" component={Productos} />
+					<Route exact path="/clientas" component={Clientas} />
 					<Route exact path="/dashboard" component={Dashboard} />
 				</Switch>
 			</Router>
-		</MuiThemeProvider>
+		
 	) : <div id="loader"><CircularProgress /></div>
 }

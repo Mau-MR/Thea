@@ -1,0 +1,67 @@
+.main-div-clientas{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    font-family: 'Cabin', bold;
+    background: rgb(245,246,250); 
+  }
+  .option-bar{
+      background: white;
+      height: 100vh;
+      width: 10%;
+      color: teal;
+  }
+  
+  .client-bar {
+    background: transparent;
+    height: 100vh;
+    width: 25%;
+    color:black;
+  }
+  .info-bar{
+    background: white;
+    height: 100vh;
+    width: 75%;
+    color:black;
+    padding-left: 0em;
+  }
+  .buttons-div-clientas{
+    background:white;
+    height: 45vh;
+    width: 90%;
+    margin: auto;
+  }
+  .window-layout-clientas{
+    width: 80%;
+    height: 4vh;
+    margin: auto;
+    margin-top: 2em;
+    border: none;
+    border-radius: 30px;
+  }
+  .returnButton{
+    width: 80%;
+    height: 4vh;
+    margin: auto;
+    margin-top: 2em;
+    border: none;
+    background: rgb(88, 21, 21);
+  }
+  .display-div{
+    display: flex;
+    width: 100%;
+  }
+  .content-div-clientas{
+    height: 100vh;
+    width: 90%;;
+  }
+  .fragment-div{
+    display: flex;
+    width: 100%;
+  }
+  .side-bar-clientas{
+    width: 10%;
+    height: 100vh;
+    background: white;
+  }
