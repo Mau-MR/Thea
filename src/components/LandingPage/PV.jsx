@@ -184,7 +184,10 @@ export default withStyles(styles) (class PV extends Component {
                     variant="filled" 
                     className={classes.TextField}/>
                     <InvButton></InvButton>
-                    <Fab variant="extended"className={classes.money} disabled={this.state.Disable}>
+                    <Fab 
+                    variant="extended"
+                    className={classes.money} 
+                    disabled={(this.state.Nombre !=="Nombre")&&(this.state.Producto.length!==0)? false : true }>
                     <MonetizationOnIcon ></MonetizationOnIcon>
                         Venta
                     </Fab>

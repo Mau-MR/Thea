@@ -2,14 +2,21 @@
 import "./landingPage.css";
 import React, { Component } from 'react';
 import ButtonLayout from "./buttonLayot";
-import {Link} from "react-router-dom";
-
-export default class landingPage extends Component {
+import {Link,withRouter } from 'react-router-dom'
+import firebase from "../firebase"
+export default withRouter (class landingPage extends Component {
+    componentDidMount(){
+        if(!firebase.getCurrentUsername()) {
+			// not logged in
+			alert('Por favor, primero introduce tu usuario')
+            this.props.history.replace('/login')
+            return null
+		}
+    }
 
   render() {
         return (
             <div className = "main-div">
-
                 <div className ="view">
                     <div className ="layout"> 
                         <i className = "fa fa-th-list"></i>
@@ -53,4 +60,4 @@ export default class landingPage extends Component {
             </div>
         )
     } 
-}
+})
