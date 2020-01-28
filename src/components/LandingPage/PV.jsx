@@ -14,6 +14,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Fab from '@material-ui/core/Fab';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import UnarchiveIcon from '@material-ui/icons/Unarchive';
+import Pendiente from "./Pendiente";
+import Tooltip from '@material-ui/core/Tooltip';
+
 const StyledTableCell = withStyles(theme => ({
     head: {
       backgroundColor: theme.palette.common.black,
@@ -62,8 +66,10 @@ const styles = theme =>({
     money:{
         marginTop:"1.4em",
         marginRight:"2em",
-        marginLeft:"2em"
-     
+        marginLeft:"2em",
+    },
+    pendiente:{
+        size:"small"
     }
 })
 
@@ -138,7 +144,19 @@ export default withStyles(styles) (class PV extends Component {
             <div className ="content-div" >
                 <div style = {{opacity :"0"}}>-</div>
                 <div className="pv-button-container">
-                <h3 className="client-name">{this.state.Nombre}</h3>
+                    <Pendiente></Pendiente>
+                    <Tooltip title="Deja como Pendiente">
+                        <Fab 
+                            color="primary" 
+                            aria-label="add" 
+                            className={classes.pendiente} 
+                            size = "small"
+                            disabled={(this.state.Nombre !=="Nombre")&&(this.state.Producto.length!==0)? false : true }>
+                                <UnarchiveIcon/>
+                        </Fab>
+                    </Tooltip>
+                        
+                    <h3 className="client-name">{this.state.Nombre}</h3>
                     <Cliente User={this.selectUser}></Cliente>
                     <div style ={{opacity:"0"}}>-</div>
                     <Registrar></Registrar>
