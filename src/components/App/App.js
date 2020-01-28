@@ -22,18 +22,15 @@ export default function App() {
 	})
 
 
-	return firebaseInitialized !== false ? (
-	
-			
-			<Router>
-				<Switch>
-					<Route exact path="/" component={LandingPage}/>
-					<Route exact path="/login" component={Login} />
-					<Route exact path="/productos" component={Productos} />
-					<Route exact path="/clientas" component={Clientas} />
-					<Route exact path="/dashboard" component={Dashboard} />
-				</Switch>
-			</Router>
-		
+	return firebaseInitialized !== false ? (	
+		<Router>
+			<Switch>
+				<Route exact path="/" component={LandingPage}/>
+				<Route exact path="/login" component={Login} />
+				<Route exact path="/productos" component={Productos} />
+				<Route exact path="/clientas" component={Clientas} />
+				<Route exact path="/dashboard" component={Dashboard} />
+			</Switch>
+		</Router>
 	) : <div id="loader"><CircularProgress /></div>
 }
