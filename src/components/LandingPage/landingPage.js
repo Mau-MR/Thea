@@ -21,7 +21,7 @@ export default withRouter (class landingPage extends Component {
                     <div className ="layout"> 
                         <i className = "fa fa-th-list"></i>
                     </div>
-                    <ButtonLayout firebase ={this.app}></ButtonLayout>
+                    <ButtonLayout></ButtonLayout>
                 </div>
 
                 <div className = "side-bar"> 

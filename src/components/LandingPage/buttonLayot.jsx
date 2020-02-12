@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PV from "./PV.jsx"
+import Bitacora from "./Bitacora"
 export default class buttonLayot extends Component {
     constructor(){
         super();
@@ -78,8 +79,13 @@ export default class buttonLayot extends Component {
     toggleCategories (){
         if (this.state.buttonSelected === "0"){
             return(
-                <PV firebase = {this.props.firebase}></PV>
+                <PV></PV>
             )
+        }else if (this.state.buttonSelected === "1"){
+                return(
+                    <Bitacora></Bitacora>
+                )
+                
         }
     }
     render() {
@@ -94,7 +100,7 @@ export default class buttonLayot extends Component {
                 <button 
                 className="window-layout" 
                 id = {1} 
-                onClick={this.handleClick}>Inicio</button>
+                onClick={this.handleClick}>Bitacora</button>
 
                 <button 
                 className="window-layout"

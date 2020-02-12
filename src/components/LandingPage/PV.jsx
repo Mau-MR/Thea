@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Cliente from "./formAlert";
 import Registrar from "./Registrar";
 import {withStyles} from '@material-ui/core/styles';
@@ -26,6 +26,7 @@ const StyledTableCell = withStyles(theme => ({
     body: {
       fontSize: 14,
     },
+
   }))(TableCell);
   
 const StyledTableRow = withStyles(theme => ({
@@ -43,6 +44,12 @@ const styles = theme =>({
         marginLeft:"0em",
         marginRight:"2em"
 
+    },
+    textfieldtable:{
+        padding: 0,
+        margin :0,
+        height:42,
+        width:70
     },
     table: {
         width: "100%",
@@ -73,7 +80,7 @@ const styles = theme =>({
     }
 })
 
-export default withStyles(styles) (class PV extends Component {
+export default withStyles(styles) (class PV extends React.Component {
     //El maravilloso estado
     constructor(){
       
@@ -81,7 +88,10 @@ export default withStyles(styles) (class PV extends Component {
         this.selectUser=this.selectUser.bind(this)
         this.handleChange= this.handleChange.bind(this)
         this.db= firebase.firestore();
+        this.showTotal = this.showTotal.bind(this)
+        
         this.state={
+            Qty:1,
             Total:0,
             Value:"",
             Valido:true,
@@ -91,6 +101,12 @@ export default withStyles(styles) (class PV extends Component {
             Producto:[]
         }
     }
+
+
+
+
+
+  
     //Parte que configura El nombre una vez introducido el numero, se llama en form Alert como Prop para pasarle los datos
     selectUser(nombre,id){
         this.setState({
@@ -136,10 +152,22 @@ export default withStyles(styles) (class PV extends Component {
             [name]:value
         })
     }
-
+showTotal(){
+    
+    var tot = this.state.Producto.map((x)=>{
+        return x.Importe
+    })
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    console.log(tot.reduce(reducer));
+    this.setState({
+        Total: tot.reduce(reducer)
+    })
+    
+  
+}
 
     render() {
-        const {classes} =this.props, {Value}=this.state
+        const {classes} =this.props, {Value, Producto, Total}=this.state
         return (
             <div className ="content-div" >
                 <div style = {{opacity :"0"}}>-</div>
@@ -151,7 +179,8 @@ export default withStyles(styles) (class PV extends Component {
                             aria-label="add" 
                             className={classes.pendiente} 
                             size = "small"
-                            disabled={(this.state.Nombre !=="Nombre")&&(this.state.Producto.length!==0)? false : true }>
+                            onClick = {()=>this.showTotal()}
+                            disabled={(this.state.Nombre !=="Nombre")? false : true }>
                                 <UnarchiveIcon/>
                         </Fab>
                     </Tooltip>
@@ -175,8 +204,32 @@ export default withStyles(styles) (class PV extends Component {
                         <TableBody>
                         {this.state.Producto.map(row => (
                             <StyledTableRow key={row.Entryid}>
-                                <StyledTableCell align="center">{row.Cantidad}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Descripción}</StyledTableCell>
+                                <StyledTableCell align="center" padding ="none">
+                                    <TextField
+                                        value={row.Cantidad}
+                                        
+                                        InputProps={{
+                                            className:classes.textfieldtable
+                                          }}
+                                        onChange = { ({target:{value}})=>{
+                                            this.setState({
+                                            ...Producto[row.Entryid-1].Cantidad = value,
+                                            ...Producto[row.Entryid-1].Importe=Producto[row.Entryid-1].Precio*value,
+                                        })}}
+                                        onBlur={()=>{this.showTotal()}}
+                                        onKeyPress={(ev) => {
+                                            if (ev.key === 'Enter') {
+                                            this.showTotal()
+                                            ev.target.blur()
+                                            }
+                                        }}
+                                        label="Qty" 
+                                        variant="outlined" 
+                                        size ="small"
+                                        type="number"
+                                    />
+                                </StyledTableCell>
+                                <StyledTableCell align="center" padding="none">{row.Descripción}</StyledTableCell>
                                 <StyledTableCell align="center">{row.Codigo}</StyledTableCell>
                                 <StyledTableCell align="center">{row.Precio}</StyledTableCell>
                                 <StyledTableCell align="center">{row.Importe}</StyledTableCell>
@@ -209,7 +262,7 @@ export default withStyles(styles) (class PV extends Component {
                     <MonetizationOnIcon ></MonetizationOnIcon>
                         Venta
                     </Fab>
-                    <h1 className="total">{this.state.Total}</h1>
+                    <h1 className="total">{Total}</h1>
 
                 </div>
                 
