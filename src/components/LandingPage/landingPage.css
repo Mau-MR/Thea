@@ -138,3 +138,24 @@
       opacity: .8;
       text-align: center;
     }
+    .bt-button-container{
+      margin: auto;
+      display: flex;
+      height: 3em;
+      width: 90%;
+      margin-top: 1em;
+      text-align: right;
+    }
+    .bt-client-name{
+      margin: auto;
+      margin-top: 5px;
+      margin-left: 2em;
+      margin-right: 5.2em;
+      height: 1.5em;
+      width: 80%;
+
+      border-radius:10px;
+      color: rgb(52, 52, 132);
+      opacity: .8;
+    
+    }

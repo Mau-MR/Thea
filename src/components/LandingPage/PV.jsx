@@ -83,7 +83,6 @@ const styles = theme =>({
 export default withStyles(styles) (class PV extends React.Component {
     //El maravilloso estado
     constructor(){
-      
         super();
         this.selectUser=this.selectUser.bind(this)
         this.handleChange= this.handleChange.bind(this)
@@ -101,12 +100,6 @@ export default withStyles(styles) (class PV extends React.Component {
             Producto:[]
         }
     }
-
-
-
-
-
-  
     //Parte que configura El nombre una vez introducido el numero, se llama en form Alert como Prop para pasarle los datos
     selectUser(nombre,id){
         this.setState({
@@ -153,17 +146,13 @@ export default withStyles(styles) (class PV extends React.Component {
         })
     }
 showTotal(){
-    
     var tot = this.state.Producto.map((x)=>{
         return x.Importe
     })
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    console.log(tot.reduce(reducer));
     this.setState({
         Total: tot.reduce(reducer)
     })
-    
-  
 }
 
     render() {
@@ -190,54 +179,53 @@ showTotal(){
                     <div style ={{opacity:"0"}}>-</div>
                     <Registrar></Registrar>
                 </div>
-                <TableContainer className ={classes.contenedor}>
-                    <Table className={classes.table} aria-label="customized table">
-                        <TableHead className={classes.head}>
-                            <TableRow>
-                                <StyledTableCell align="center" className={classes.cabecera}>Cantidad</StyledTableCell>
-                                <StyledTableCell align="center" className ={classes.cabecera}>Descripción</StyledTableCell>
-                                <StyledTableCell align="center" className ={classes.cabecera}>Codigo</StyledTableCell>
-                                <StyledTableCell align="center" className ={classes.cabecera}>Precio</StyledTableCell>
-                                <StyledTableCell align="center" className ={classes.cabecera}>Importe</StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {this.state.Producto.map(row => (
-                            <StyledTableRow key={row.Entryid}>
-                                <StyledTableCell align="center" padding ="none">
-                                    <TextField
-                                        value={row.Cantidad}
-                                        
-                                        InputProps={{
-                                            className:classes.textfieldtable
-                                          }}
-                                        onChange = { ({target:{value}})=>{
-                                            this.setState({
-                                            ...Producto[row.Entryid-1].Cantidad = value,
-                                            ...Producto[row.Entryid-1].Importe=Producto[row.Entryid-1].Precio*value,
-                                        })}}
-                                        onBlur={()=>{this.showTotal()}}
-                                        onKeyPress={(ev) => {
-                                            if (ev.key === 'Enter') {
-                                            this.showTotal()
-                                            ev.target.blur()
-                                            }
-                                        }}
-                                        label="Qty" 
-                                        variant="outlined" 
-                                        size ="small"
-                                        type="number"
-                                    />
-                                </StyledTableCell>
-                                <StyledTableCell align="center" padding="none">{row.Descripción}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Codigo}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Precio}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Importe}</StyledTableCell>
-                            </StyledTableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                    <TableContainer className ={classes.contenedor}>
+                        <Table className={classes.table} aria-label="customized table">
+                            <TableHead className={classes.head}>
+                                <TableRow>
+                                    <StyledTableCell align="center" className={classes.cabecera}>Cantidad</StyledTableCell>
+                                    <StyledTableCell align="center" className ={classes.cabecera}>Descripción</StyledTableCell>
+                                    <StyledTableCell align="center" className ={classes.cabecera}>Codigo</StyledTableCell>
+                                    <StyledTableCell align="center" className ={classes.cabecera}>Precio</StyledTableCell>
+                                    <StyledTableCell align="center" className ={classes.cabecera}>Importe</StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.Producto.map(row => (
+                                    <StyledTableRow key={row.Entryid}>
+                                        <StyledTableCell align="center" padding ="none">
+                                            <TextField
+                                                value={row.Cantidad}
+                                                InputProps={{
+                                                    className:classes.textfieldtable
+                                                }}
+                                                onChange = { ({target:{value}})=>{
+                                                    this.setState({
+                                                    ...Producto[row.Entryid-1].Cantidad = value,
+                                                    ...Producto[row.Entryid-1].Importe=Producto[row.Entryid-1].Precio*value,
+                                                })}}
+                                                onBlur={()=>{this.showTotal()}}
+                                                onKeyPress={(ev) => {
+                                                    if (ev.key === 'Enter') {
+                                                    this.showTotal()
+                                                    ev.target.blur()
+                                                    }
+                                                }}
+                                                label="Qty" 
+                                                variant="outlined" 
+                                                size ="small"
+                                                type="number"
+                                            />
+                                        </StyledTableCell>
+                                        <StyledTableCell align="center" padding="none">{row.Descripción}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.Codigo}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.Precio}</StyledTableCell>
+                                        <StyledTableCell align="center">{row.Importe}</StyledTableCell>
+                                    </StyledTableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 <div className="PV-inferior">
                     <TextField
                     value={Value}
