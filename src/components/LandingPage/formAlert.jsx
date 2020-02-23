@@ -68,7 +68,7 @@ consulta(value){
     docRef.get().then((doc) =>{
         if (doc.exists) {
             console.log("Document data:", doc.data());
-            this.props.User(doc.data().Nombre,doc.data().id)
+            this.props.User(doc.data().Nombre,doc.data().Apellido,doc.data().Numero)
             this.setState({
                 open: false,
                 valido: true,

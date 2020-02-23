@@ -9,9 +9,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import firebase from "firebase";
 import "firebase/firestore";
+import 'firebase/auth'
+
 import Fab from '@material-ui/core/Fab';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import Tooltip from '@material-ui/core/Tooltip';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Chip from '@material-ui/core/Chip';
 
 const styles = theme =>({
     TextField:{
@@ -31,136 +37,88 @@ const styles = theme =>({
 
     }
 })
+const messages = [
+    {
+      id: 1,
+      primary: 'Mauricio Eulalio Merida Rivera',
+      secondary: "Fecha de nacimiento: 05/11/1989",
+    },
+    {
+      id: 2,
+      primary: 'Brenda Gudiño Fernandez Estrada ',
+      secondary: "Fecha de nacimiento: 24/11/1979",
+    },
+    {
+      id: 3,
+      primary: 'Monica Alfonso Laguin',
+      secondary: 'Fecha de nacimiento: 08/06/2000',
+    }
+  ];
 export default withStyles(styles) (class InvButton extends Component {
+    
 constructor(){
     super();
     this.db = firebase.firestore();
     this.state = {
         open:false,
-        speed:10,
-        Cliente:{
-            Nombre:"",
-            Apellido:"",
-            Correo:"",
-            Numero:"",
-            Nacimiento:""
-        }
+        Pendientes:[]
     }
 }
-
 
 handleClickOpen = ()=>{
     this.setState({
         open: !this.state.open
     })
 }
-handleChange = name => ({target:{value}}) =>{
+OpenClient=()=>{
     this.setState({
-      Cliente:{
-        ...this.state.Cliente,
-        [name]:value
-        
-      }
+        open: !this.state.open
     })
-}
-handleSubmit = ()=>{
-    //validarprro
-    console.log(typeof(this.state.Cliente.Numero))
-   this.db.collection("Cliente").doc(this.state.Cliente.Numero).set({
-    Nombre: this.state.Cliente.Nombre,
-    Apellido: this.state.Cliente.Apellido,
-    Correo: this.state.Cliente.Correo,
-    Numero: this.state.Cliente.Numero,
-    Nacimiento: this.state.Cliente.Nacimiento
-   })
-   .then(function(docRef) {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch(function(error) {
-    console.error("Error adding document: ", error);
-});
-    this.setState({
-        open: false,
-        Cliente:{
-            Nombre:"",
-            Apellido:"",
-            Correo:"",
-            Numero:"",
-            Nacimiento:""
+    var docRef = this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente");
+
+    docRef.get().then((querySnapshot)=> {
+            querySnapshot.forEach(function(doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+            });
+           
         }
-    })
+    ).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
 }
 render(){
-    const {open, Cliente: {Nombre,Apellido,Correo,Numero,Nacimiento}} = this.state,{classes} =this.props
+    const {open} = this.state,{classes} =this.props
     return (
         <div>
             <Tooltip title ="Abre">
-                <Fab onClick={this.handleClickOpen} className ={classes.SearchButton} size ="small">
+                <Fab onClick={this.OpenClient} className ={classes.SearchButton} size ="small">
                     <ArchiveIcon></ArchiveIcon>
                 </Fab>
             </Tooltip>
             
           <Dialog open={open} onClose={this.handleClickOpen} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title" >Ventas pendientes</DialogTitle>
+            <DialogContentText style ={{marginLeft:25}}>
+                Selecciona la cuenta que desees abrir
+            </DialogContentText>
             <DialogContent className ={classes.contenedor}>
-            <DialogTitle id="form-dialog-title" >Registrar</DialogTitle>
-              <DialogContentText>
-                Llena el siguente formulario con toda la información necesaria
-              </DialogContentText>
-              <TextField
-                    className={classes.TextField}
-                    id="Nombre"
-                    label="Nombre"
-                    variant="outlined"
-                    color="secondary"
-                    value ={Nombre}
-                    onChange = {this.handleChange("Nombre")}
-                />
-                <TextField
-                    className={classes.TextField}
-                    id="Apellido"
-                    label="Apellido"
-                    variant="outlined"
-                    value={Apellido}
-                    onChange = { this.handleChange("Apellido")}
-                    color="secondary"
-                />
-                <TextField
-                    className={classes.TextField}
-                    id="Correo"
-                    label="Correo"
-                    variant="outlined"
-                    value={Correo}
-                    onChange ={this.handleChange("Correo")}
-                    color="secondary"
-                />
-                <TextField
-                    className={classes.TextField}
-                    id="Numero"
-                    label="Numero"
-                    variant="outlined"
-                    value = {Numero}
-                    onChange ={this.handleChange("Numero")}
-                    color="secondary"
-                    
-                />
-                <TextField
-                    className ={classes.DatePicker}
-                    id="date"
-                    label="Fecha de Nacimiento"
-                    type="date"
-                    value={Nacimiento}
-                    onChange = {this.handleChange("Nacimiento")}
-                    InputLabelProps={{
-                    shrink: true,
-                    }}
-                />
+                <div style={{maxWidth: 350, maxHeight:900}}>
+                    <List className={classes.list}>
+                        {messages.map(({ id, primary, secondary, person }) => (
+                        <React.Fragment key={id}>
+                            <ListItem button className={classes.butto} >
+                                <Chip size="small" label="Pestañas" className={classes.chip}/>
+                                <ListItemText primary={primary} secondary={secondary}l/>
+                            </ListItem>
+                        </React.Fragment>
+                        ))}
+                    </List>
+                </div>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClickOpen} color="primary">
                 Cancelar
-              </Button>
-              <Button onClick={this.handleSubmit} color="primary">
-                Guardar
               </Button>
             </DialogActions>
           </Dialog>

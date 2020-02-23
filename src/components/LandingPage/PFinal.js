@@ -48,7 +48,7 @@ export default withStyles(styles)(class PInicio extends Component {
             Open:false,
             Izquierdo:0,
             Derecho:0,
-            btnValue:"P.Inicio"
+            btnValue:"P.Final"
         }
     }
     handleClick = ()=>{
@@ -64,14 +64,14 @@ export default withStyles(styles)(class PInicio extends Component {
     handleSubmit = ()=>{
         this.setState({
             Open: !this.state.Open,
-            btnValue: "I:"+this.state.Izquierdo+"/"+this.state.Derecho
+            btnValue: "F:"+this.state.Izquierdo+"/"+this.state.Derecho
         })
     }
     render() {
         const {classes} =this.props, {Open,Izquierdo,Derecho, btnValue}=this.state
         return (
             <div>
-    <Button onClick={this.handleClick} style={{height:"55px", width:"20px", marginRight:"15px", marginTop:"17px"}} variant ="outlined">{btnValue}</Button>
+                <Button onClick={this.handleClick} style={{height:"55px", width:"20px", marginRight:"15px", marginTop:"17px"}} variant ="outlined">{btnValue}</Button>
                 <Dialog  open={Open} onClose={this.handleClick}>
                     <DialogTitle>Pestañas de Inicio</DialogTitle>
                     <DialogContent className={classes.content} >
@@ -87,7 +87,7 @@ export default withStyles(styles)(class PInicio extends Component {
                             InputProps={{
                                 className:classes.textfieldtable
                             }}
-                            id="IIzq" 
+                            id="FIzq" 
                             label="Izquierdo" 
                             variant="outlined" 
                             type="number"
@@ -105,8 +105,8 @@ export default withStyles(styles)(class PInicio extends Component {
                             InputProps={{
                                 className:classes.textfieldtable
                             }}
-                            id="IDer" 
-                            label="Dercho" 
+                            id="FDer" 
+                            label="Derecho" 
                             variant="outlined" 
                             type="number"
                             className={classes.TextField}

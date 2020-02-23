@@ -4,6 +4,8 @@ import Registrar from "./Registrar";
 import {withStyles} from '@material-ui/core/styles';
 import firebase from "firebase";
 import "firebase/firestore"
+import 'firebase/auth'
+
 import TextField from '@material-ui/core/TextField';
 import InvButton from "./Inv-button";
 import TableCell from '@material-ui/core/TableCell';
@@ -95,16 +97,18 @@ export default withStyles(styles) (class PV extends React.Component {
             Value:"",
             Valido:true,
             Nombre:"Nombre",
-            Id:99,
+            Apellido:"Apellido",
+            Telefono:99,
             Disable: true,
             Producto:[]
         }
     }
     //Parte que configura El nombre una vez introducido el numero, se llama en form Alert como Prop para pasarle los datos
-    selectUser(nombre,id){
+    selectUser(nombre,apellido,tel){
         this.setState({
             Nombre:nombre,
-            Id:id,
+            Apellido:apellido,
+            Telefono:tel,
         })
     }
     //Hace la llamda del codigo del producto para ver si existe y obtener sus datos 
@@ -154,6 +158,31 @@ showTotal(){
         Total: tot.reduce(reducer)
     })
 }
+pendiente(){
+   this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").add({
+        Nombre: this.state.Nombre,
+        Apellido: this.state.Apellido,
+        Telefono:this.state.Telefono,
+        Productos:this.state.Producto
+   }).then(()=>{
+        this.setState({
+            Qty:1,
+            Total:0,
+            Value:"",
+            Valido:true,
+            Nombre:"Nombre",
+            Apellido:"Apellido",
+            Telefono:99,
+            Disable: true,
+            Producto:[]
+        })
+    }).catch(function(error) {
+    console.error("Error adding document: ", error);
+    });
+}
+abrir(){
+
+}
 
     render() {
         const {classes} =this.props, {Value, Producto, Total}=this.state
@@ -168,7 +197,7 @@ showTotal(){
                             aria-label="add" 
                             className={classes.pendiente} 
                             size = "small"
-                            onClick = {()=>this.showTotal()}
+                            onClick = {()=>this.pendiente()}
                             disabled={(this.state.Nombre !=="Nombre")? false : true }>
                                 <UnarchiveIcon/>
                         </Fab>
