@@ -59,6 +59,7 @@ export default withStyles(styles) (class InvButton extends Component {
 constructor(){
     super();
     this.db = firebase.firestore();
+    this.OpenClient = this.OpenClient.bind(this)
     this.state = {
         open:false,
         Pendientes:[]
@@ -70,25 +71,18 @@ handleClickOpen = ()=>{
         open: !this.state.open
     })
 }
-OpenClient=()=>{
-    this.setState({
-        open: !this.state.open
-    })
-    var docRef = this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente");
+async OpenClient(){
 
-    docRef.get().then((querySnapshot)=> {
-            querySnapshot.forEach(function(doc) {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-            });
-           
-        }
-    ).catch(function(error) {
-        console.log("Error getting document:", error);
-    });
+    var docRef =await this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").get();
+    this.setState({
+        open: !this.state.open,
+        Pendientes:docRef.docs.map(doc => doc.data())
+    })
+   console.log(this.state)
+   console.log(this.state.Pendientes[0])
 }
 render(){
-    const {open} = this.state,{classes} =this.props
+    const {open, Pendientes} = this.state,{classes} =this.props
     return (
         <div>
             <Tooltip title ="Abre">
@@ -105,13 +99,16 @@ render(){
             <DialogContent className ={classes.contenedor}>
                 <div style={{maxWidth: 350, maxHeight:900}}>
                     <List className={classes.list}>
-                        {messages.map(({ id, primary, secondary, person }) => (
-                        <React.Fragment key={id}>
-                            <ListItem button className={classes.butto} >
-                                <Chip size="small" label="Pestañas" className={classes.chip}/>
-                                <ListItemText primary={primary} secondary={secondary}l/>
-                            </ListItem>
-                        </React.Fragment>
+                        {Pendientes.map((Cliente,index) => (
+                            <React.Fragment key={index}>
+                                <ListItem button className={classes.butto} onClick={()=>
+                                    this.props.Open(Cliente.Nombre,Cliente.Apellido,Cliente.Telefono,Cliente.Productos,Cliente.Total)
+                                    
+                                    }>
+                                    <Chip size="small" label="Pestañas" className={classes.chip}/>
+                                    <ListItemText primary={Cliente.Nombre+ " "+Cliente.Apellido} secondary={Cliente.Telefono+"    $"+ Cliente.Total}/>
+                                </ListItem>
+                            </React.Fragment>
                         ))}
                     </List>
                 </div>

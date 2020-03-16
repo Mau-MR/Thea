@@ -90,16 +90,14 @@ export default withStyles(styles) (class PV extends React.Component {
         this.handleChange= this.handleChange.bind(this)
         this.db= firebase.firestore();
         this.showTotal = this.showTotal.bind(this)
-        
+        this.abrir = this.abrir.bind(this)
         this.state={
-            Qty:1,
-            Total:0,
-            Value:"",
-            Valido:true,
             Nombre:"Nombre",
             Apellido:"Apellido",
+            Total:0,
+            Valido: true,
             Telefono:99,
-            Disable: true,
+            Seleccionado:null,
             Producto:[]
         }
     }
@@ -159,12 +157,13 @@ showTotal(){
     })
 }
 pendiente(){
-   this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").add({
+   this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).set({
         Nombre: this.state.Nombre,
         Apellido: this.state.Apellido,
         Telefono:this.state.Telefono,
-        Productos:this.state.Producto
-   }).then(()=>{
+        Productos:this.state.Producto,
+        Total: this.state.Total
+   },{merge:true}).then(()=>{
         this.setState({
             Qty:1,
             Total:0,
@@ -180,8 +179,14 @@ pendiente(){
     console.error("Error adding document: ", error);
     });
 }
-abrir(){
-
+abrir(Nomb, Apelli, Tel, Product, tot){
+    this.setState({
+        Nombre: Nomb,
+        Apellido: Apelli,
+        Telefono: Tel, 
+        Producto: Product,
+        Total:tot
+    })
 }
 
     render() {
@@ -190,7 +195,7 @@ abrir(){
             <div className ="content-div" >
                 <div style = {{opacity :"0"}}>-</div>
                 <div className="pv-button-container">
-                    <Pendiente></Pendiente>
+                    <Pendiente Open={this.abrir}></Pendiente>
                     <Tooltip title="Deja como Pendiente">
                         <Fab 
                             color="primary" 
