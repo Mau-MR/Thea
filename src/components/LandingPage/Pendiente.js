@@ -37,23 +37,7 @@ const styles = theme =>({
 
     }
 })
-const messages = [
-    {
-      id: 1,
-      primary: 'Mauricio Eulalio Merida Rivera',
-      secondary: "Fecha de nacimiento: 05/11/1989",
-    },
-    {
-      id: 2,
-      primary: 'Brenda Gudiño Fernandez Estrada ',
-      secondary: "Fecha de nacimiento: 24/11/1979",
-    },
-    {
-      id: 3,
-      primary: 'Monica Alfonso Laguin',
-      secondary: 'Fecha de nacimiento: 08/06/2000',
-    }
-  ];
+
 export default withStyles(styles) (class InvButton extends Component {
     
 constructor(){
@@ -76,10 +60,14 @@ async OpenClient(){
     var docRef =await this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").get();
     this.setState({
         open: !this.state.open,
-        Pendientes:docRef.docs.map(doc => doc.data())
+        Pendientes:docRef.docs.map(doc => {
+            var rObj={}
+            rObj[doc.id]=doc.data()
+            return  rObj
+        })
     })
-   console.log(this.state)
-   console.log(this.state.Pendientes[0])
+    console.log(this.state)
+
 }
 render(){
     const {open, Pendientes} = this.state,{classes} =this.props
@@ -99,17 +87,19 @@ render(){
             <DialogContent className ={classes.contenedor}>
                 <div style={{maxWidth: 350, maxHeight:900}}>
                     <List className={classes.list}>
-                        {Pendientes.map((Cliente,index) => (
-                            <React.Fragment key={index}>
-                                <ListItem button className={classes.butto} onClick={()=>
-                                    this.props.Open(Cliente.Nombre,Cliente.Apellido,Cliente.Telefono,Cliente.Productos,Cliente.Total)
-                                    
-                                    }>
-                                    <Chip size="small" label="Pestañas" className={classes.chip}/>
-                                    <ListItemText primary={Cliente.Nombre+ " "+Cliente.Apellido} secondary={Cliente.Telefono+"    $"+ Cliente.Total}/>
-                                </ListItem>
-                            </React.Fragment>
-                        ))}
+                        {Pendientes.map((Clien,index) => {
+                            var arr=Object.values(Clien)
+                            var Cliente =arr[0]
+                            return<React.Fragment key={index}>
+                            <ListItem button className={classes.butto} onClick={()=>
+                                this.props.Open(Cliente.Nombre,Cliente.Apellido,Cliente.Telefono,Cliente.Productos,Cliente.Total,Object.keys(Clien)[0])
+                                
+                                }>
+                                <Chip size="small" label="Pestañas" className={classes.chip}/>
+                                <ListItemText primary={Cliente.Nombre+ " "+Cliente.Apellido} secondary={Cliente.Telefono+"    $"+ Cliente.Total}/>
+                            </ListItem>
+                        </React.Fragment>
+                        })}
                     </List>
                 </div>
             </DialogContent>

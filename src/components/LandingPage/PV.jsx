@@ -98,7 +98,8 @@ export default withStyles(styles) (class PV extends React.Component {
             Valido: true,
             Telefono:99,
             Seleccionado:null,
-            Producto:[]
+            Producto:[],
+            Pid: 0
         }
     }
     //Parte que configura El nombre una vez introducido el numero, se llama en form Alert como Prop para pasarle los datos
@@ -123,11 +124,12 @@ export default withStyles(styles) (class PV extends React.Component {
                     Codigo:doc.data().Codigo,
                     Precio:doc.data().Precio,
                     Importe:doc.data().Precio
+                    
                   })
                 this.setState({
                     Valido: true,
                     Value:"",
-                    Producto
+                    Total: this.state.Total+doc.data().Precio
                 })
             } else {
                 //doc.data() will be undefined in this case
@@ -151,42 +153,73 @@ showTotal(){
     var tot = this.state.Producto.map((x)=>{
         return x.Importe
     })
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
     this.setState({
-        Total: tot.reduce(reducer)
+        Total: tot.reduce((x,y)=>x+y)
     })
 }
 pendiente(){
-   this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).set({
-        Nombre: this.state.Nombre,
-        Apellido: this.state.Apellido,
-        Telefono:this.state.Telefono,
-        Productos:this.state.Producto,
-        Total: this.state.Total
-   },{merge:true}).then(()=>{
-        this.setState({
-            Qty:1,
-            Total:0,
-            Value:"",
-            Valido:true,
-            Nombre:"Nombre",
-            Apellido:"Apellido",
-            Telefono:99,
-            Disable: true,
-            Producto:[]
-        })
-    }).catch(function(error) {
-    console.error("Error adding document: ", error);
-    });
+    if (this.state.Pid ===0){
+        this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").add({
+            Nombre: this.state.Nombre,
+            Apellido: this.state.Apellido,
+            Telefono:this.state.Telefono,
+            Productos:this.state.Producto,
+            Total: this.state.Total
+       }).then(()=>{
+            this.setState({
+                Qty:1,
+                Total:0,
+                Value:"",
+                Valido:true,
+                Nombre:"Nombre",
+                Apellido:"Apellido",
+                Telefono:99,
+                Disable: true,
+                Producto:[],
+                Pid:0
+            })
+        }).catch(function(error) {
+        console.error("Error adding document: ", error);
+        });
+    }else{
+        this.db.collection("Sucursal").doc(firebase.auth().currentUser.uid).collection("Pendiente").doc(this.state.Pid)
+        .set({
+            Nombre: this.state.Nombre,
+            Apellido: this.state.Apellido,
+            Telefono:this.state.Telefono,
+            Productos:this.state.Producto,
+            Total: this.state.Total
+        }, { merge: true })
+        .then(()=>{
+            this.setState({
+                Qty:1,
+                Total:0,
+                Value:"",
+                Valido:true,
+                Nombre:"Nombre",
+                Apellido:"Apellido",
+                Telefono:99,
+                Disable: true,
+                Producto:[],
+                Pid:0
+            })
+        }).catch(function(error) {
+        console.error("Error adding document: ", error);
+        });
+
+    }
+ 
 }
-abrir(Nomb, Apelli, Tel, Product, tot){
+abrir(Nomb, Apelli, Tel, Product, tot, pendid){
     this.setState({
         Nombre: Nomb,
         Apellido: Apelli,
         Telefono: Tel, 
         Producto: Product,
-        Total:tot
+        Total:tot,
+        Pid:pendid
     })
+
 }
 
     render() {
@@ -237,11 +270,11 @@ abrir(Nomb, Apelli, Tel, Product, tot){
                                                     this.setState({
                                                     ...Producto[row.Entryid-1].Cantidad = value,
                                                     ...Producto[row.Entryid-1].Importe=Producto[row.Entryid-1].Precio*value,
-                                                })}}
-                                                onBlur={()=>{this.showTotal()}}
+                                                    })
+                                                this.showTotal()
+                                                }}
                                                 onKeyPress={(ev) => {
                                                     if (ev.key === 'Enter') {
-                                                    this.showTotal()
                                                     ev.target.blur()
                                                     }
                                                 }}
@@ -268,7 +301,6 @@ abrir(Nomb, Apelli, Tel, Product, tot){
                     onKeyPress={(ev) => {
                         if (ev.key === 'Enter') {
                         this.consulta(this.state.Value)
-                        console.log(this.state)
                         }
                     }}
                     onChange ={this.handleChange("Value")}
