@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PV from "./PV.jsx"
 import Bitacora from "./Bitacora"
+import Calendar from "./Calendar"
 export default class buttonLayot extends Component {
     constructor(){
         super();
@@ -85,8 +86,11 @@ export default class buttonLayot extends Component {
                 return(
                     <Bitacora></Bitacora>
                 )
-                
-        }
+        }else if (this.state.buttonSelected === "2"){
+            return(
+                <Calendar/>
+            )
+    }
     }
     render() {
         return (
