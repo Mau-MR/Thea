@@ -5,38 +5,21 @@ import { ScheduleComponent, TreeViewArgs, ResourcesDirective, ResourceDirective,
 import "./Calendar.css"
 
 
-export default class Calendar extends Component {
-    constructor(){
-        super()
-        this.Change = 0;
+export default class Calendar extends Component{
+    constructor() {
+        super(...arguments);
+      
+        this.employeeData = [
+            { Text: 'Alice', Id: 1, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Content writer' },
+            { Text: 'Nancy', Id: 2, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Designer' },
+            { Text: 'Robert', Id: 3, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Software Engineer' },
+            { Text: 'Robson', Id: 4, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Support Engineer' },
+            { Text: 'Laura', Id: 5, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Human Resource' },
+            { Text: 'Margaret', Id: 6, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Content Analyst' }
+        ];
+   
     }
-    private employeeData: Object[] = [
-        { Text: 'Alice', Id: 1, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Content writer' },
-        { Text: 'Nancy', Id: 2, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Designer' },
-        { Text: 'Robert', Id: 3, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Software Engineer' },
-        { Text: 'Robson', Id: 4, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Support Engineer' },
-        { Text: 'Laura', Id: 5, GroupId: 1, Color: 'rgb(49,48,135)', Designation: 'Human Resource' },
-        { Text: 'Margaret', Id: 6, GroupId: 2, Color: 'rgb(228,95,99)', Designation: 'Content Analyst' }
-    ];
-
-    private getEmployeeName(value: ResourceDetails | TreeViewArgs): string {
-        return (value as ResourceDetails).resourceData[(value as ResourceDetails).resource.textField] as string;
-    }
-
-    private getEmployeeImage(value: ResourceDetails): string {
-        let resourceName: string = this.getEmployeeName(value);
-        return resourceName.toLowerCase();
-    }
-
-    private getEmployeeDesignation(value: ResourceDetails): string {
-        return (value as ResourceDetails).resourceData.Designation as string;
-    }
-
-    private resourceHeaderTemplate(props: any): JSX.Element {
-        return (<div className="template-wrap"><div className="employee-category"><div className={"employee-image " + this.getEmployeeImage(props)}></div><div className="employee-name">
-            {this.getEmployeeName(props)}</div><div className="employee-designation">{this.getEmployeeDesignation(props)}</div></div></div>);
-    }
-    private localData: EventSettingsModel ={
+    localData={
         dataSource:[{
             Subject: "Testing",
             Id: 2,
@@ -44,11 +27,27 @@ export default class Calendar extends Component {
             EndTime: new Date(2018, 7, 1, 11, 0),
         }]
     }
+    getEmployeeName(value) {
+        return value.resourceData[value.resource.textField];
+    }
+
+    getEmployeeImage(value) {
+        let resourceName = this.getEmployeeName(value);
+        return resourceName.toLowerCase();
+    }
+
+    getEmployeeDesignation(value) {
+        return value.resourceData.Designation;
+    }
+    resourceHeaderTemplate(props) {
+        return (<div className="template-wrap"><div className="employee-category"><div className={"employee-image " + this.getEmployeeImage(props)}></div><div className="employee-name">
+            {this.getEmployeeName(props)}</div><div className="employee-designation">{this.getEmployeeDesignation(props)}</div></div></div>);
+    }
+
     dataBound(args) {
         console.log(this.localData)
     }
-    public render() {
-        
+    render() {
         return (
             <div className="content-div">
                <div className='schedule-control-section'>
