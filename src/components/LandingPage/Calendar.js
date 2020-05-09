@@ -106,6 +106,11 @@ export default class Calendar extends Component {
   dataBound(args) {
     console.log(this.localData);
   }
+  currentday(props) {
+    console.log(props.currentDate);
+    var dia = props.currentDate.toString();
+    console.log(dia.substring(0, dia.lenght - 42));
+  }
   render() {
     return (
       <div className="content-div">
@@ -126,6 +131,7 @@ export default class Calendar extends Component {
                   dataBound={this.dataBound.bind(this)}
                   startHour="08:00"
                   endHour="19:00"
+                  navigating={this.currentday.bind(this)}
                 >
                   <ResourcesDirective>
                     <ResourceDirective
