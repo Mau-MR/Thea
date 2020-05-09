@@ -1,57 +1,55 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Chip from '@material-ui/core/Chip';
-import TextField from '@material-ui/core/TextField';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Chip from "@material-ui/core/Chip";
+import TextField from "@material-ui/core/TextField";
 import InfoBar from "./InfoBar";
 
 const messages = [
   {
     id: 1,
-    primary: 'Maria Fernanda Alonso Aguirre',
+    primary: "Maria Fernanda Alonso Aguirre",
     secondary: "Fecha de nacimiento: 05/11/1989",
   },
   {
     id: 2,
-    primary: 'Brenda Gudiño Fernandez Estrada',
+    primary: "Brenda Gudiño Fernandez Estrada",
     secondary: "Fecha de nacimiento: 24/11/1979",
   },
   {
     id: 3,
-    primary: 'Monica Alfonso Laguin',
-    secondary: 'Fecha de nacimiento: 08/06/2000',
-  }
+    primary: "Monica Alfonso Laguin",
+    secondary: "Fecha de nacimiento: 08/06/2000",
+  },
 ];
 
-const useStyles = makeStyles(theme => ({
- 
+const useStyles = makeStyles((theme) => ({
   list: {
     marginTop: "0em",
-    paddingRight:"0em"
+    paddingRight: "0em",
   },
-  butto:{
-    background:"white",
-    margin:"auto",
-    marginTop:".5em",
-    borderRadius:"10px",
-    width:"90%",
-    fontFamily: 'Cabin', 
-    display:"block"
+  butto: {
+    background: "white",
+    margin: "auto",
+    marginTop: ".5em",
+    borderRadius: "10px",
+    width: "90%",
+    fontFamily: "Cabin",
+    display: "block",
   },
-  chip:{
-      background:"rgb(213,78,103)",
-      color:"white"
+  chip: {
+    background: "rgb(213,78,103)",
+    color: "white",
   },
-  textField:{
-    width:"60%",
-    height:"6em",
-    margin:"auto",
-    marginTop:"3em",
-    fontSize:"10px"
-  }
-
+  textField: {
+    width: "60%",
+    height: "6em",
+    margin: "auto",
+    marginTop: "3em",
+    fontSize: "10px",
+  },
 }));
 
 export default function BottomAppBar() {
@@ -60,24 +58,29 @@ export default function BottomAppBar() {
   return (
     <div className="fragment-div">
       <div className="client-bar">
-          <div>
-              <form noValidate autoComplete="off">
-                  <TextField id="outlined-basic" label="Busqueda" variant="outlined" className= {classes.textField}/>
-              </form>
-          </div>
-          <List className={classes.list}>
-            {messages.map(({ id, primary, secondary, person }) => (
-              <React.Fragment key={id}>
-                <ListItem button className={classes.butto} >
-                  <Chip size="small" label="Pestañas" className={classes.chip}/>
-                  <ListItemText primary={primary} secondary={secondary}l/>
-                </ListItem>
-              </React.Fragment>
-            ))}
-          </List>
+        <div>
+          <form noValidate autoComplete="off">
+            <TextField
+              id="outlined-basic"
+              label="Busqueda"
+              variant="outlined"
+              className={classes.textField}
+            />
+          </form>
+        </div>
+        <List className={classes.list}>
+          {messages.map(({ id, primary, secondary, person }) => (
+            <React.Fragment key={id}>
+              <ListItem button className={classes.butto}>
+                <Chip size="small" label="Pestañas" className={classes.chip} />
+                <ListItemText primary={primary} secondary={secondary} l />
+              </ListItem>
+            </React.Fragment>
+          ))}
+        </List>
       </div>
       <div className="info-bar">
-          <InfoBar></InfoBar>
+        <InfoBar></InfoBar>
       </div>
     </div>
   );
