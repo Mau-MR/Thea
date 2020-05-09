@@ -2,7 +2,12 @@ import React, { Component } from 'react'
 import { ScheduleComponent, TreeViewArgs, ResourcesDirective, ResourceDirective,
     ViewsDirective, ViewDirective, ResourceDetails, Inject, TimelineViews,
     Resize, DragAndDrop, Day, EventSettingsModel} from "@syncfusion/ej2-react-schedule"
+
 import "./Calendar.css"
+import { loadCldr } from '@syncfusion/ej2-base';
+loadcldr(enNumberData, entimeZoneData);
+import {setCulture, setCurrencyCode} from '@syncfusion/ej2-base';
+setCulture('es');
 
 
 export default class Calendar extends Component{
@@ -22,9 +27,10 @@ export default class Calendar extends Component{
     localData={
         dataSource:[{
             Subject: "Testing",
-            Id: 2,
-            StartTime: new Date(2018, 7, 1, 10, 11),
-            EndTime: new Date(2018, 7, 1, 11, 0),
+            Id: 0,
+            StartTime: new Date(2020, 2, 28, 10, 11),
+            EndTime: new Date(2020, 2, 28, 11, 0),
+            EmployeeId:1
         }]
     }
     getEmployeeName(value) {
@@ -40,13 +46,27 @@ export default class Calendar extends Component{
         return value.resourceData.Designation;
     }
     resourceHeaderTemplate(props) {
-        return (<div className="template-wrap"><div className="employee-category"><div className={"employee-image " + this.getEmployeeImage(props)}></div><div className="employee-name">
-            {this.getEmployeeName(props)}</div><div className="employee-designation">{this.getEmployeeDesignation(props)}</div></div></div>);
+        return (
+        <div className="template-wrap">
+            <div className="employee-category">
+                <div className={"employee-image " + this.getEmployeeImage(props)}></div>
+                <div className="employee-name">
+                    {this.getEmployeeName(props)}
+                </div>
+                <div className="employee-designation">{this.getEmployeeDesignation(props)}</div>
+            </div>
+        </div>);
     }
 
     dataBound(args) {
         console.log(this.localData)
     }
+    currentDay(props){
+        console.log(props.currentDate)
+        var Dia = props.currentDate.toString()
+        console.log(Dia.substring(0, Dia.length- 42))
+    }
+
     render() {
         return (
             <div className="content-div">
@@ -55,11 +75,13 @@ export default class Calendar extends Component{
                     <div className='control-wrapper drag-sample-wrapper'>
                         <div className="schedule-container">
                             <ScheduleComponent cssClass='block-events' width='100%' height='560px' 
-                                currentView='TimelineDay' resourceHeaderTemplate={this.resourceHeaderTemplate.bind(this)}
+                                currentView='TimelineDay' 
+                                resourceHeaderTemplate={this.resourceHeaderTemplate.bind(this)}
                                 eventSettings={this.localData}
-                                group={{ enableCompactView: false, resources: ['Employee'] }}
+                                group={{ enableCompactView: true, resources: ['Employee'] }}
                                 dataBound={this.dataBound.bind(this)}
                                 startHour='08:00' endHour='19:00' 
+                                navigating={this.currentDay.bind(this)}
                                 >
                                 <ResourcesDirective>
                                     <ResourceDirective field='EmployeeId' title='Employees' name='Employee' allowMultiple={true}
