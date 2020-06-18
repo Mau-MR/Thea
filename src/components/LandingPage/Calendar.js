@@ -1,80 +1,77 @@
 import React, { Component } from "react";
 import {
   ScheduleComponent,
-  TreeViewArgs,
   ResourcesDirective,
   ResourceDirective,
   ViewsDirective,
   ViewDirective,
-  ResourceDetails,
   Inject,
   TimelineViews,
   Resize,
   DragAndDrop,
   Day,
-  EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import "./Calendar.css";
+import { loadCldr, L10n } from "@syncfusion/ej2-base";
+import spanish from "./es.json";
+import firebase from "firebase";
+import "firebase/firestore";
+import "firebase/auth";
+//Esta es la forma extraña de poner el calendario en español, en cuestion las fechas
+loadCldr(
+  require("cldr-data/main/es/ca-gregorian.json"),
+  require("cldr-data/main/es/numbers.json"),
+  require("cldr-data/main/es/timeZoneNames.json")
+);
+//Esta seccion es para poner el calendario en español de los textos en general
+L10n.load(spanish);
 
 export default class Calendar extends Component {
   constructor() {
     super(...arguments);
-
-    this.employeeData = [
-      {
-        Text: "Alice",
-        Id: 1,
-        GroupId: 1,
-        Color: "rgb(49,48,135)",
-        Designation: "Content writer",
-      },
-      {
-        Text: "Nancy",
-        Id: 2,
-        GroupId: 2,
-        Color: "rgb(228,95,99)",
-        Designation: "Designer",
-      },
-      {
-        Text: "Robert",
-        Id: 3,
-        GroupId: 1,
-        Color: "rgb(49,48,135)",
-        Designation: "Software Engineer",
-      },
-      {
-        Text: "Robson",
-        Id: 4,
-        GroupId: 2,
-        Color: "rgb(228,95,99)",
-        Designation: "Support Engineer",
-      },
-      {
-        Text: "Laura",
-        Id: 5,
-        GroupId: 1,
-        Color: "rgb(49,48,135)",
-        Designation: "Human Resource",
-      },
-      {
-        Text: "Margaret",
-        Id: 6,
-        GroupId: 2,
-        Color: "rgb(228,95,99)",
-        Designation: "Content Analyst",
-      },
-    ];
+    this.db = firebase.firestore();
+    this.state = {
+      employeeData: [],
+    };
   }
   localData = {
     dataSource: [
       {
         Subject: "Testing",
         Id: 2,
-        StartTime: new Date(2018, 7, 1, 10, 11),
-        EndTime: new Date(2018, 7, 1, 11, 0),
+        StartTime: new Date(),
+        EndTime: new Date(2020, 4, 9, 11, 0),
       },
     ],
   };
+  async componentDidMount() {
+    await this.db
+      //Recoleccion del personal en un solo documento de firebase en lugar de una coleccion
+      .collection("Sucursal")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Personal")
+      .get()
+      .then((snapshot) => {
+        var personal = snapshot.docs.map((doc) => {
+          return doc.data();
+        });
+        var size = Object.keys(personal[0]).length;
+        personal = Object.values(personal[0]);
+        //Asignando ID y color al personal
+        for (var i = 0; i <= size - 1; i++) {
+          if (i % 2 == 0) {
+            var col = { Color: "rgb(228,95,99)", Id: i + 1 };
+          } else {
+            var col = { Color: "rgb(49,48,135)", Id: i + 1 };
+          }
+          var unid = Object.assign(personal[i], col);
+          personal[i] = unid;
+        }
+        this.setState({
+          employeeData: personal,
+        });
+      });
+  }
   getEmployeeName(value) {
     return value.resourceData[value.resource.textField];
   }
@@ -85,15 +82,15 @@ export default class Calendar extends Component {
   }
 
   getEmployeeDesignation(value) {
-    return value.resourceData.Designation;
+    return value.resourceData.Asignacion;
   }
   resourceHeaderTemplate(props) {
     return (
       <div className="template-wrap">
         <div className="employee-category">
-          <div
-            className={"employee-image " + this.getEmployeeImage(props)}
-          ></div>
+          <div className="employee-image" id={"per-" + props.resourceData.Id}>
+            {this.getEmployeeImage(props)}
+          </div>
           <div className="employee-name">{this.getEmployeeName(props)}</div>
           <div className="employee-designation">
             {this.getEmployeeDesignation(props)}
@@ -103,15 +100,16 @@ export default class Calendar extends Component {
     );
   }
 
-  dataBound(args) {
-    console.log(this.localData);
-  }
+  dataBound(args) {}
   currentday(props) {
-    console.log(props.currentDate);
-    var dia = props.currentDate.toString();
-    console.log(dia.substring(0, dia.lenght - 42));
+    if (props.action == "date") {
+      console.log(props.currentDate);
+      var dia = props.currentDate.toString();
+      console.log(dia.substring(0, dia.lenght - 42));
+    }
   }
   render() {
+    console.log(this.state.employeeData);
     return (
       <div className="content-div">
         <div className="schedule-control-section">
@@ -132,6 +130,7 @@ export default class Calendar extends Component {
                   startHour="08:00"
                   endHour="19:00"
                   navigating={this.currentday.bind(this)}
+                  locale="es"
                 >
                   <ResourcesDirective>
                     <ResourceDirective
@@ -139,8 +138,8 @@ export default class Calendar extends Component {
                       title="Employees"
                       name="Employee"
                       allowMultiple={true}
-                      dataSource={this.employeeData}
-                      textField="Text"
+                      dataSource={this.state.employeeData}
+                      textField="Nombre"
                       idField="Id"
                       colorField="Color"
                     ></ResourceDirective>
