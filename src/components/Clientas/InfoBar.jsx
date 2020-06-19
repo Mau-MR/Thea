@@ -60,7 +60,6 @@ const useStyles = makeStyles({
 
 export default function CustomizedTables() {
   const classes = useStyles();
-
   return (
     <TableContainer className={classes.contenedor}>
       <Table className={classes.table} aria-label="customized table">
