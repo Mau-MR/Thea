@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import PV from "./PV.jsx";
-import Bitacora from "./Bitacora";
-import Calendar from "./Calendar.jsx";
+import PV from "./SalePoint/PV.jsx";
+import Bitacora from "./Binnacle/Bitacora";
+import Calendar from "./Calendar/Calendar.jsx";
 export default class buttonLayot extends Component {
   constructor() {
     super();

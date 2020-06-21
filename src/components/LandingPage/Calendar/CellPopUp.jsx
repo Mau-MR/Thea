@@ -21,28 +21,24 @@ const styles = (theme) => ({
     margin: "auto",
     textAlign: "center",
   },
-  head: {
-    background: "red",
-  },
-  DatePicker: {
-    marginTop: "1.2em",
-    marginLeft: "0em",
-    marginRight: "1em",
-    width: "250px",
-  },
 });
 export default withStyles(styles)(
-  class FormDialog extends Component {
-    constructor(props) {
-      super(props);
+  class CellPopUp extends Component {
+    constructor() {
+      super();
       this.db = firebase.firestore();
       this.state = {
-        valido: true,
         open: false,
-        Cliente: {
-          Numero: "",
+        valid: true,
+        apointment: {
+          name: "*****",
+          surname: "*****",
+          phone: "",
+          id: "",
+          employee: "",
+          startHour: "",
+          endHour: "",
         },
-        text: "",
       };
     }
 
@@ -53,12 +49,13 @@ export default withStyles(styles)(
     };
     handleChange = (name) => ({ target: { value } }) => {
       this.setState({
-        Cliente: {
-          ...this.state.Cliente,
+        apointment: {
+          ...this.state.apointment,
           [name]: value,
         },
       });
     };
+
     consulta(value) {
       var docRef = this.db.collection("Cliente").doc(value);
 
@@ -66,36 +63,44 @@ export default withStyles(styles)(
         .get()
         .then((doc) => {
           if (doc.exists) {
-            console.log("Document data:", doc.data());
-            this.props.User(
-              doc.data().Nombre,
-              doc.data().Apellido,
-              doc.data().Numero
-            );
             this.setState({
-              open: false,
-              valido: true,
-              Cliente: {
-                Numero: "",
+              valid: true,
+              apointment: {
+                ...this.state.apointment,
+                name: doc.data().Nombre,
+                surname: doc.data().Apellido,
               },
             });
+            console.log(this.state);
           } else {
             // doc.data() will be undefined in this case
             this.setState({
               valido: false,
+              apointment: {
+                ...this.state.apointment,
+                name: "*****",
+                surname: "*****",
+              },
             });
-            this.props.User("Nombre", 99);
           }
         })
         .catch(function (error) {
           console.log("Error getting document:", error);
         });
     }
-
     render() {
       const {
           open,
-          Cliente: { Numero },
+          valid,
+          apointment: {
+            name,
+            surname,
+            phone,
+            id,
+            employee,
+            startHour,
+            endHour,
+          },
         } = this.state,
         { classes } = this.props;
       return (
@@ -105,7 +110,7 @@ export default withStyles(styles)(
             color="primary"
             onClick={this.handleClickOpen}
           >
-            Buscar
+            Registrar
           </Button>
           <Dialog
             open={open}
@@ -115,34 +120,32 @@ export default withStyles(styles)(
             <DialogContent className={classes.contenedor}>
               <DialogTitle id="form-dialog-title">Registrar</DialogTitle>
               <DialogContentText>
-                Busca tu cliente llenando uno de sus datos y buscando en la
-                tabla
+                Llena el siguente formulario con toda la información necesaria
               </DialogContentText>
-
+              <DialogContentText>{name + " " + surname}</DialogContentText>
               <TextField
-                error={this.state.Cliente.Numero === ""}
-                helperText={
-                  this.state.valido
-                    ? " "
-                    : "El numero no existe en nuestra base"
-                }
                 className={classes.TextField}
+                id="margin-dense"
+                variant="outlined"
+                label="Telefono"
+                error={!valid}
+                helperText={valid ? " " : "El numero no existe en nuestra base"}
                 onKeyPress={(ev) => {
                   if (ev.key === "Enter") {
-                    this.consulta(this.state.Cliente.Numero);
+                    this.consulta(this.state.apointment.phone);
                   }
                 }}
-                id="Numero"
-                label="Numero"
-                variant="outlined"
-                value={Numero}
-                onChange={this.handleChange("Numero")}
-                color="secondary"
+                value={phone}
+                margin="dense"
+                onChange={this.handleChange("phone")}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClickOpen} color="primary">
                 Cancelar
+              </Button>
+              <Button onClick={this.handleSubmit} color="primary">
+                Guardar
               </Button>
             </DialogActions>
           </Dialog>
@@ -151,4 +154,3 @@ export default withStyles(styles)(
     }
   }
 );
-

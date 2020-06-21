@@ -1,13 +1,14 @@
 import React from "react";
-import Cliente from "./formAlert";
+import Cliente from "../formAlert";
 import Registrar from "./Registrar";
-import { withStyles } from "@material-ui/core/styles";
 import firebase from "firebase";
+import Pendiente from "./Pendiente";
+import InvButton from "../Inv-button";
 import "firebase/firestore";
 import "firebase/auth";
 
+import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import InvButton from "./Inv-button";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Table from "@material-ui/core/Table";
@@ -17,7 +18,6 @@ import TableHead from "@material-ui/core/TableHead";
 import Fab from "@material-ui/core/Fab";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import UnarchiveIcon from "@material-ui/icons/Unarchive";
-import Pendiente from "./Pendiente";
 import Tooltip from "@material-ui/core/Tooltip";
 
 const StyledTableCell = withStyles((theme) => ({
@@ -251,11 +251,10 @@ export default withStyles(styles)(
                 <UnarchiveIcon />
               </Fab>
             </Tooltip>
-
             <h3 className="client-name">{this.state.Nombre}</h3>
-            <Cliente User={this.selectUser}></Cliente>
+            <Cliente User={this.seletUser}></Cliente>
             <div style={{ opacity: "0" }}>-</div>
-            <Registrar></Registrar>
+            <Registrar></Registrar>{" "}
           </div>
           <TableContainer className={classes.contenedor}>
             <Table className={classes.table} aria-label="customized table">

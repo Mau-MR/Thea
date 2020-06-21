@@ -17,6 +17,7 @@ import spanish from "./es.json";
 import firebase from "firebase";
 import "firebase/firestore";
 import "firebase/auth";
+import CellPopUp from "./CellPopUp.jsx";
 //setting the language name to spanish
 loadCldr(
   require("cldr-data/main/es/ca-gregorian.json"),
@@ -33,8 +34,18 @@ export default class Calendar extends Component {
     this.db = firebase.firestore();
     this.state = {
       employeeData: [],
+      open: false,
+      apointment: {
+        name: "*****",
+        phone: "",
+        surname: "*****",
+        id: "",
+        employee: "",
+        startHour: "",
+        endHour: "",
+      },
     };
-  }
+  } //information about the apointments
   localData = {
     dataSource: [],
   };
@@ -112,11 +123,15 @@ export default class Calendar extends Component {
     console.log(args);
   }
   onCellClicked(args) {
+    console.log(args.startTime);
+    console.log(args.endTime);
+    console.log(args.groupIndex);
     console.log(args);
   }
   render() {
     return (
       <div className="content-div">
+        <CellPopUp />
         <div className="schedule-control-section">
           <div className="col-lg-12 control-section">
             <div className="control-wrapper drag-sample-wrapper">

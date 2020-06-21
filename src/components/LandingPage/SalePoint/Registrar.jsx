@@ -33,16 +33,18 @@ const styles = (theme) => ({
 });
 export default withStyles(styles)(
   class FormDialog extends Component {
-    constructor(props) {
-      super(props);
+    constructor() {
+      super();
       this.db = firebase.firestore();
       this.state = {
-        valido: true,
         open: false,
         Cliente: {
+          Nombre: "",
+          Apellido: "",
+          Correo: "",
           Numero: "",
+          Nacimiento: "",
         },
-        text: "",
       };
     }
 
@@ -59,43 +61,42 @@ export default withStyles(styles)(
         },
       });
     };
-    consulta(value) {
-      var docRef = this.db.collection("Cliente").doc(value);
-
-      docRef
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            console.log("Document data:", doc.data());
-            this.props.User(
-              doc.data().Nombre,
-              doc.data().Apellido,
-              doc.data().Numero
-            );
-            this.setState({
-              open: false,
-              valido: true,
-              Cliente: {
-                Numero: "",
-              },
-            });
-          } else {
-            // doc.data() will be undefined in this case
-            this.setState({
-              valido: false,
-            });
-            this.props.User("Nombre", 99);
-          }
+    handleSubmit = () => {
+      //validarprro
+      console.log(typeof this.state.Cliente.Numero);
+      this.db
+        .collection("Cliente")
+        .doc(this.state.Cliente.Numero)
+        .set({
+          Nombre: this.state.Cliente.Nombre,
+          Apellido: this.state.Cliente.Apellido,
+          Correo: this.state.Cliente.Correo,
+          Numero: this.state.Cliente.Numero,
+          Nacimiento: this.state.Cliente.Nacimiento,
+        })
+        .then(function (docRef) {
+          console.log("Document written with ID: ", docRef.id);
         })
         .catch(function (error) {
-          console.log("Error getting document:", error);
+          console.error("Error adding document: ", error);
         });
-    }
+
+      this.setState({
+        open: false,
+        Cliente: {
+          Nombre: "",
+          Apellido: "",
+          Correo: "",
+          Numero: "",
+          Nacimiento: "",
+        },
+      });
+    };
 
     render() {
       const {
           open,
-          Cliente: { Numero },
+          Cliente: { Nombre, Apellido, Correo, Numero, Nacimiento },
         } = this.state,
         { classes } = this.props;
       return (
@@ -105,7 +106,7 @@ export default withStyles(styles)(
             color="primary"
             onClick={this.handleClickOpen}
           >
-            Buscar
+            Registrar
           </Button>
           <Dialog
             open={open}
@@ -115,23 +116,37 @@ export default withStyles(styles)(
             <DialogContent className={classes.contenedor}>
               <DialogTitle id="form-dialog-title">Registrar</DialogTitle>
               <DialogContentText>
-                Busca tu cliente llenando uno de sus datos y buscando en la
-                tabla
+                Llena el siguente formulario con toda la información necesaria
               </DialogContentText>
-
               <TextField
-                error={this.state.Cliente.Numero === ""}
-                helperText={
-                  this.state.valido
-                    ? " "
-                    : "El numero no existe en nuestra base"
-                }
                 className={classes.TextField}
-                onKeyPress={(ev) => {
-                  if (ev.key === "Enter") {
-                    this.consulta(this.state.Cliente.Numero);
-                  }
-                }}
+                id="Nombre"
+                label="Nombre"
+                variant="outlined"
+                color="secondary"
+                value={Nombre}
+                onChange={this.handleChange("Nombre")}
+              />
+              <TextField
+                className={classes.TextField}
+                id="Apellido"
+                label="Apellido"
+                variant="outlined"
+                value={Apellido}
+                onChange={this.handleChange("Apellido")}
+                color="secondary"
+              />
+              <TextField
+                className={classes.TextField}
+                id="Correo"
+                label="Correo"
+                variant="outlined"
+                value={Correo}
+                onChange={this.handleChange("Correo")}
+                color="secondary"
+              />
+              <TextField
+                className={classes.TextField}
                 id="Numero"
                 label="Numero"
                 variant="outlined"
@@ -139,10 +154,24 @@ export default withStyles(styles)(
                 onChange={this.handleChange("Numero")}
                 color="secondary"
               />
+              <TextField
+                className={classes.DatePicker}
+                id="date"
+                label="Fecha de Nacimiento"
+                type="date"
+                value={Nacimiento}
+                onChange={this.handleChange("Nacimiento")}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClickOpen} color="primary">
                 Cancelar
+              </Button>
+              <Button onClick={this.handleSubmit} color="primary">
+                Guardar
               </Button>
             </DialogActions>
           </Dialog>
