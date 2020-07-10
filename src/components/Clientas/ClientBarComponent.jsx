@@ -1,3 +1,4 @@
+import InfoBar from "./InfoBarComponent";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -5,7 +6,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
-import InfoBar from "./InfoBar";
 
 const messages = [
   {

@@ -1,8 +1,8 @@
 import React from "react";
-import Cliente from "../formAlert";
+import Cliente from "../FormAlert";
 import PIncio from "./PInicio";
 import PFnal from "./PFinal";
-import InvButton from "../Inv-button";
+import InvButton from "../InvButtonContainer";
 import firebase from "firebase";
 import "firebase/firestore";
 

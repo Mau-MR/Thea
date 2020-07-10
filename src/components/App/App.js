@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
-import LandingPage from "../LandingPage/landingPage";
+import LandingPage from "../LandingPage/LandingPage";
 import Login from "../Login/Login";
 import Productos from "../Productos/Productos";
 import Clientas from "../Clientas/clientas";

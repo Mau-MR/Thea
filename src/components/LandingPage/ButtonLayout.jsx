@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import PV from "./SalePoint/PV.jsx";
+import PV from "./SalePoint/SPContainer.jsx";
 import Bitacora from "./Binnacle/Bitacora";
 import Calendar from "./Calendar/Calendar.jsx";
-export default class buttonLayot extends Component {
+//redux
+import { connect } from "react-redux";
+import { changeLandingPageView } from "./../../Redux/actions";
+
+class buttonLayot extends Component {
   constructor() {
     super();
     this.handleClick = this.handleClick.bind(this);
@@ -77,10 +81,13 @@ export default class buttonLayot extends Component {
 
   toggleCategories() {
     if (this.state.buttonSelected === "0") {
+      this.props.changeLandingPageView("PV");
       return <PV></PV>;
     } else if (this.state.buttonSelected === "1") {
+      this.props.changeLandingPageView("Binnacle");
       return <Bitacora></Bitacora>;
     } else if (this.state.buttonSelected === "2") {
+      this.props.changeLandingPageView("Calendar");
       return <Calendar />;
     }
   }
@@ -109,3 +116,5 @@ export default class buttonLayot extends Component {
     );
   }
 }
+
+export default connect(null, { changeLandingPageView })(buttonLayot);

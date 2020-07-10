@@ -1,16 +1,18 @@
 import React, { Component } from "react";
+import {
+  getPendingSales,
+  popPendingClientDialog,
+  openPendingSale,
+} from "../../../Redux/actions";
+import { connect } from "react-redux";
+
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import firebase from "firebase";
-import "firebase/firestore";
-import "firebase/auth";
-
 import Fab from "@material-ui/core/Fab";
 import ArchiveIcon from "@material-ui/icons/Archive";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -19,127 +21,108 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Chip from "@material-ui/core/Chip";
 
-const styles = (theme) => ({
-  TextField: {
-    margin: "auto",
-    marginTop: "1em",
-    width: "90%",
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(0),
-  },
-  SearchButton: {
+const StyledPendingFab = withStyles(() => ({
+  root: {
     marginTop: "0em",
     background: "rgb(52,52,132)",
     color: "white",
     marginRight: "1em",
   },
-});
+}))(Fab);
 
-export default withStyles(styles)(
-  class InvButton extends Component {
-    constructor() {
-      super();
-      this.db = firebase.firestore();
-      this.OpenClient = this.OpenClient.bind(this);
-      this.state = {
-        open: false,
-        Pendientes: [],
-      };
-    }
-    handleClickOpen = () => {
-      this.setState({
-        open: !this.state.open,
-      });
-    };
-    async OpenClient() {
-      var docRef = await this.db
-        .collection("Sucursal")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("Pendiente")
-        .get();
-      this.setState({
-        open: !this.state.open,
-        Pendientes: docRef.docs.map((doc) => {
-          var rObj = {};
-          rObj[doc.id] = doc.data();
-          return rObj;
-        }),
-      });
-      console.log(this.state);
-    }
-    render() {
-      const { open, Pendientes } = this.state,
-        { classes } = this.props;
-      return (
-        <div>
-          <Tooltip title="Abre">
-            <Fab
-              onClick={this.OpenClient}
-              className={classes.SearchButton}
-              size="small"
-            >
-              <ArchiveIcon></ArchiveIcon>
-            </Fab>
-          </Tooltip>
-
-          <Dialog
-            open={open}
-            onClose={this.handleClickOpen}
-            aria-labelledby="form-dialog-title"
-          >
-            <DialogTitle id="form-dialog-title">Ventas pendientes</DialogTitle>
-            <DialogContentText style={{ marginLeft: 25 }}>
-              Selecciona la cuenta que desees abrir
-            </DialogContentText>
-            <DialogContent className={classes.contenedor}>
-              <div style={{ maxWidth: 350, maxHeight: 900 }}>
-                <List className={classes.list}>
-                  {Pendientes.map((Clien, index) => {
-                    var arr = Object.values(Clien);
-                    var Cliente = arr[0];
-                    return (
-                      <React.Fragment key={index}>
-                        <ListItem
-                          button
-                          className={classes.butto}
-                          onClick={() =>
-                            this.props.Open(
-                              Cliente.Nombre,
-                              Cliente.Apellido,
-                              Cliente.Telefono,
-                              Cliente.Productos,
-                              Cliente.Total,
-                              Object.keys(Clien)[0]
-                            )
-                          }
-                        >
-                          <Chip
-                            size="small"
-                            label="Pestañas"
-                            className={classes.chip}
-                          />
-                          <ListItemText
-                            primary={Cliente.Nombre + " " + Cliente.Apellido}
-                            secondary={
-                              Cliente.Telefono + "    $" + Cliente.Total
-                            }
-                          />
-                        </ListItem>
-                      </React.Fragment>
-                    );
-                  })}
-                </List>
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.handleClickOpen} color="primary">
-                Cancelar
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-      );
+class Pendiente extends Component {
+  constructor() {
+    super();
+    this.OpenClient = this.OpenClient.bind(this);
+  }
+  handleClickOpen = () => {
+    this.props.popDialog();
+  };
+  OpenClient() {
+    if (this.props.listIsRead) {
+      console.log(this.props.pendientes);
+      this.props.popDialog();
+    } else {
+      this.props.getPendingSales();
+      this.props.popDialog();
     }
   }
-);
+  render() {
+    const { dialogIsOpen, pendientes } = this.props;
+    return (
+      <div>
+        <Tooltip title="Abre">
+          <StyledPendingFab onClick={this.OpenClient} size="small">
+            <ArchiveIcon></ArchiveIcon>
+          </StyledPendingFab>
+        </Tooltip>
+
+        <Dialog
+          open={dialogIsOpen}
+          onClose={this.handleClickOpen}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Ventas pendientes</DialogTitle>
+          <DialogContentText style={{ marginLeft: 25 }}>
+            Selecciona la cuenta que desees abrir
+          </DialogContentText>
+          <DialogContent>
+            <div style={{ maxWidth: 350, maxHeight: 900 }}>
+              <List>
+                {Object.values(pendientes).map((Clien, index) => {
+                  var arr = Object.values(Clien);
+                  var Cliente = arr[0];
+                  return (
+                    <React.Fragment key={index}>
+                      <ListItem
+                        button
+                        onClick={() =>
+                          this.props.openPendingSale({
+                            client: {
+                              Nombre: Cliente.Nombre,
+                              Apellido: Cliente.Apellido,
+                              Telefono: Cliente.Telefono,
+                              Total: Cliente.Total,
+                              Cid: Object.keys(Clien)[0],
+                            },
+                            Productos: Cliente.Productos,
+                          })
+                        }
+                      >
+                        <Chip size="small" label="Pestañas" />
+                        <ListItemText
+                          primary={Cliente.Nombre + " " + Cliente.Apellido}
+                          secondary={Cliente.Telefono + "    $" + Cliente.Total}
+                        />
+                      </ListItem>
+                    </React.Fragment>
+                  );
+                })}
+              </List>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClickOpen} color="primary">
+              Cancelar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
+}
+const mapState = (state) => {
+  return {
+    dialogIsOpen: state.landingPage.pV.pendingDialogIsOpen,
+    pendientes: state.landingPage.pV.Pendientes,
+    listIsRead: state.landingPage.pV.pendingClientListIsRead,
+  };
+};
+const mapDispatch = (dispatch) => {
+  return {
+    getPendingSales: () => dispatch(getPendingSales()),
+    popDialog: () => dispatch(popPendingClientDialog()),
+    openPendingSale: (sale) => dispatch(openPendingSale(sale)),
+  };
+};
+export default connect(mapState, mapDispatch)(Pendiente);

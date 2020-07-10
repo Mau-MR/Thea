@@ -2,6 +2,7 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firebase-firestore";
 import keys from "../Keys";
+
 class Firebase {
   constructor() {
     app.initializeApp(keys.getFirebaseConfig());
@@ -30,16 +31,58 @@ class Firebase {
     });
   }
 
+  async getProduct(id) {
+    const docRef = await this.db.collection("Productos").doc(id).get();
+    return docRef;
+  }
+  async getClient(phone) {
+    const docRef = this.db.collection("Cliente").doc(phone).get();
+    return docRef;
+  }
+  async setPendingClient(client, products) {
+    const docRef = await this.db
+      .collection("Sucursal")
+      .doc(this.auth.currentUser.uid)
+      .collection("Pendiente")
+      .add({
+        Nombre: client.Nombre,
+        Apellido: client.Apellido,
+        Telefono: client.Telefono,
+        Productos: products,
+        Total: client.Total,
+      });
+    return docRef;
+  }
+  async updatePendingClient(client, products) {
+    const docRef = await this.db
+      .collection("Sucursal")
+      .doc(this.auth.currentUser.uid)
+      .collection("Pendiente")
+      .doc(client.Cid)
+      .set(
+        {
+          Nombre: client.Nombre,
+          Apellido: client.Apellido,
+          Telefono: client.Telefono,
+          Productos: products,
+          Total: client.Total,
+        },
+        { merge: true }
+      );
+    return docRef;
+  }
+
+  async getPendingSales() {
+    const docRef = await this.db
+      .collection("Sucursal")
+      .doc(this.auth.currentUser.uid)
+      .collection("Pendiente")
+      .get();
+    return docRef;
+  }
+
   getCurrentUsername() {
     return this.auth.currentUser && this.auth.currentUser.displayName;
   }
-
-  async getCurrentUserQuote() {
-    const quote = await this.db
-      .doc(`users_codedamn_video/${this.auth.currentUser.uid}`)
-      .get();
-    return quote.get("quote");
-  }
 }
-
 export default new Firebase();

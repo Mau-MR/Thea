@@ -1,8 +1,8 @@
-import "./landingPage.css";
-import React, { Component } from "react";
-import ButtonLayout from "./buttonLayot";
-import { Link, withRouter } from "react-router-dom";
+import "./LandingPage.css";
+import ButtonLayout from "./ButtonLayout";
 import firebase from "../firebase";
+import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
 export default withRouter(
   class landingPage extends Component {
     componentDidMount() {
