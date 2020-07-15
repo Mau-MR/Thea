@@ -1,6 +1,6 @@
 import * as actions from "./actionTypes";
 import firebase from "../components/firebase";
-
+import { produce } from "immer";
 //Actions creators of the landing page
 export function changeLandingPageView(newView) {
   return {
@@ -29,26 +29,38 @@ export const popPendingClientDialog = () => {
   };
 };
 //Asyn actions of firebase
-export const setPendingClient = (client, products) => async (dispatch) => {
+export const setPendingClient = (client, Productos) => async (dispatch) => {
   dispatch({ type: actions.SETTING_PENDING_CLIENT });
   if (client.Cid === 0) {
-    console.log(client, products);
     await firebase
-      .setPendingClient(client, products)
+      .setPendingClient(client, Productos)
       .then((docRef) => {
-        console.log(docRef.id);
-        dispatch({ type: actions.PENDING_CLIENT_SUCCESS });
+        const id = docRef.id;
+        //FIXME:this was the only form of change client only read variable
+        const newClient = produce(client, (draftVariable) => {
+          draftVariable.Cid = id;
+        });
+        dispatch({
+          type: actions.PENDING_CLIENT_SUCCESS,
+          payload: { client: newClient, Productos },
+        });
         dispatch({ type: actions.RESET_PV_TO_ORIGINAL_VALUES });
       })
-      .catch((error) => dispatch({ type: actions.PENDING_CLIENT_FAIL, error }));
+      .catch((error) => console.log(error));
   } else {
     await firebase
-      .updatePendingClient(client, products)
+      .updatePendingClient(client, Productos)
       .then(() => {
-        dispatch({ type: actions.UPDATE_PENDING_CLIENT });
+        dispatch({
+          type: actions.UPDATE_PENDING_CLIENT,
+          payload: { client, Productos: Productos },
+        });
         dispatch({ type: actions.RESET_PV_TO_ORIGINAL_VALUES });
       })
-      .catch((error) => dispatch({ type: actions.PENDING_CLIENT_FAIL, error }));
+      .catch((error) => {
+        console.log(error);
+        dispatch({ type: actions.PENDING_CLIENT_FAIL, error });
+      });
   }
 };
 export const getClient = (phone) => async (dispatch) => {
@@ -71,12 +83,11 @@ export const getPendingSales = () => async (dispatch) => {
   firebase
     .getPendingSales()
     .then((docRef) => {
-      const sales = docRef.docs.map((doc) => {
-        var rObj = {};
-        rObj[doc.id] = doc.data();
-        return rObj;
-      });
-      dispatch({ type: actions.PENDING_SALES_SUCCES, payload: sales });
+      var pendingList = {};
+      for (let doc of docRef.docs) {
+        pendingList[doc.id] = doc.data();
+      }
+      dispatch({ type: actions.PENDING_SALES_SUCCES, payload: pendingList });
     })
     .catch((error) => {
       dispatch({ type: actions.PENDING_SALES_FAIL, error });

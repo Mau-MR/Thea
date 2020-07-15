@@ -92,15 +92,7 @@ export default withStyles(styles)(
       const {
           open,
           valid,
-          apointment: {
-            name,
-            surname,
-            phone,
-            id,
-            employee,
-            startHour,
-            endHour,
-          },
+          apointment: { name, surname, phone },
         } = this.state,
         { classes } = this.props;
       return (

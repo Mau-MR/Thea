@@ -64,11 +64,12 @@ export default class Calendar extends Component {
         var size = Object.keys(personal[0]).length;
         personal = Object.values(personal[0]);
         //Asignando ID y color al personal
+        var col = {};
         for (var i = 0; i <= size - 1; i++) {
-          if (i % 2 == 0) {
-            var col = { Color: "rgb(228,95,99)", Id: i + 1 };
+          if (i % 2 === 0) {
+            col = { Color: "rgb(228,95,99)", Id: i + 1 };
           } else {
-            var col = { Color: "rgb(49,48,135)", Id: i + 1 };
+            col = { Color: "rgb(49,48,135)", Id: i + 1 };
           }
           var unid = Object.assign(personal[i], col);
           personal[i] = unid;
@@ -90,7 +91,11 @@ export default class Calendar extends Component {
     return (
       <div className="template-wrap">
         <div className="employee-category">
-          <img className="employee-image" src={props.resourceData.Imagen}></img>
+          <img
+            className="employee-image"
+            src={props.resourceData.Imagen}
+            alt="Actualiza la imagen"
+          ></img>
           <div className="employee-name">{this.getEmployeeName(props)}</div>
           <div className="employee-designation">
             {this.getEmployeeDesignation(props)}
@@ -107,7 +112,7 @@ export default class Calendar extends Component {
   }
   currentday(props) {
     //trigger every time that the user change of day
-    if (props.action == "date") {
+    if (props.action === "date") {
       console.log(props.currentDate);
       var dia = props.currentDate.toString();
       console.log(dia.substring(0, dia.lenght - 42));

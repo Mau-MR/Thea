@@ -81,6 +81,7 @@ function CostumTable(props) {
                       props.modifyQty(value, index);
                     }}
                     onKeyPress={(ev) => {
+                      //this to get out with an enter
                       if (ev.key === "Enter") {
                         ev.target.blur();
                       }

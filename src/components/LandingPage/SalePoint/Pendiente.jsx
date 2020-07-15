@@ -40,7 +40,6 @@ class Pendiente extends Component {
   };
   OpenClient() {
     if (this.props.listIsRead) {
-      console.log(this.props.pendientes);
       this.props.popDialog();
     } else {
       this.props.getPendingSales();
@@ -69,30 +68,31 @@ class Pendiente extends Component {
           <DialogContent>
             <div style={{ maxWidth: 350, maxHeight: 900 }}>
               <List>
-                {Object.values(pendientes).map((Clien, index) => {
-                  var arr = Object.values(Clien);
-                  var Cliente = arr[0];
+                {Object.keys(pendientes).map((Client, index) => {
+                  //this just for adding Cid the real client key
+                  var client = pendientes[Client];
                   return (
                     <React.Fragment key={index}>
                       <ListItem
                         button
-                        onClick={() =>
+                        onClick={() => {
                           this.props.openPendingSale({
                             client: {
-                              Nombre: Cliente.Nombre,
-                              Apellido: Cliente.Apellido,
-                              Telefono: Cliente.Telefono,
-                              Total: Cliente.Total,
-                              Cid: Object.keys(Clien)[0],
+                              Nombre: client.Nombre,
+                              Apellido: client.Apellido,
+                              Telefono: client.Telefono,
+                              Total: client.Total,
+                              Cid: Client,
                             },
-                            Productos: Cliente.Productos,
-                          })
-                        }
+                            Productos: client.Productos,
+                          });
+                          this.props.popDialog();
+                        }}
                       >
                         <Chip size="small" label="Pestañas" />
                         <ListItemText
-                          primary={Cliente.Nombre + " " + Cliente.Apellido}
-                          secondary={Cliente.Telefono + "    $" + Cliente.Total}
+                          primary={client.Nombre + " " + client.Apellido}
+                          secondary={client.Telefono + "    $" + client.Total}
                         />
                       </ListItem>
                     </React.Fragment>

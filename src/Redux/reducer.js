@@ -9,6 +9,7 @@ const initialState = {
       pendingDialogIsOpen: false,
       pendingClientListIsRead: false,
       Pendientes: {},
+
       client: {
         Cid: 0,
         Nombre: "Nombre",
@@ -28,6 +29,20 @@ const initialState = {
 const updateTotal = (draftState) => {
   var total = draftState.pV.Productos.map((x) => x.Importe);
   draftState.pV.client.Total = total.reduce((x, y) => x + y);
+};
+const objectDestructureSales = (sale) => {
+  const {
+    client: { Cid, Total, Telefono, Nombre, Apellido },
+    Productos,
+  } = sale;
+  return {
+    Total,
+    Telefono,
+    Nombre,
+    Apellido,
+    Productos,
+    Cid,
+  };
 };
 function firebaseReducer(state, action) {
   switch (action.type) {
@@ -49,6 +64,17 @@ function landingPageReducer(state = initialState.landingPage, action) {
     case actionType.PRODUCT_EXIST:
       return firebaseReducer(state, action);
 
+    case actionType.PENDING_CLIENT_SUCCESS:
+      return produce(state, (draftState) => {
+        const newPendingSale = objectDestructureSales(action.payload);
+        draftState.pV.Pendientes[newPendingSale.Cid] = newPendingSale;
+      });
+    case actionType.UPDATE_PENDING_CLIENT:
+      return produce(state, (draftState) => {
+        //TODO:newpendingsale repeats, find a way to add into a json without adding key just values
+        const updatePendingSale = objectDestructureSales(action.payload);
+        draftState.pV.Pendientes[updatePendingSale.Cid] = updatePendingSale;
+      });
     case actionType.RESET_PV_TO_ORIGINAL_VALUES:
       return produce(initialState.landingPage, (draftState) => {
         draftState.pV.visibility = state.pV.visibility;

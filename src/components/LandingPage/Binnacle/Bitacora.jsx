@@ -142,15 +142,10 @@ export default withStyles(styles)(
     render() {
       const { classes } = this.props,
         {
-          Value,
-          Fecha,
-          Cita,
           Servicio,
           DescripcionServicio,
           DPestañas,
           DescripcionPestaña,
-          PInicio,
-          PFinal,
           Lashista,
           Mapeo,
           Observaciones,
